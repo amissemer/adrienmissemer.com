@@ -1,8 +1,10 @@
 ---
 layout: post
-title: You're up and running!
+title: The blog is up!
 published: true
 comments: false
 ---
 
 This is my first post.
+
+See my [archived projects]
