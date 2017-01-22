@@ -7,4 +7,4 @@ comments: false
 
 This is my first post.
 
-See my [archived projects]({% link /archivs.md %})
+See my [archived projects]({% link /archives.md %})
