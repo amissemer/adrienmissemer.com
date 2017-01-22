@@ -7,4 +7,4 @@ comments: false
 
 This is my first post.
 
-See my [archived projects]
+See my [archived projects](/archives/)
