@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- saved from url=(0113)projet.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <title>Rendu a base d'images</title>
+    
+</head>
+  <body>
+                                         
+<table width="100%">
+                     <tbody>
+                        <tr align="center">
+                     <td align="left"><img src="X.jpg" width="216" height="70">
+                    &nbsp;</td>
+                      <td align="right">Majeure "<b>
+                    Algèbre, Informatique et Applications</b>"
+       <br>
+                          <b>Enseignement d'Approfondissement</b> "<a href="http://www.enseignement.polytechnique.fr/profs/informatique/Francois.Sillion/Majeure/GSI.html">
+                    Géométrie et Synthèse d'Images"
+      </a></td>
+                     </tr>
+                                                                        
+       
+  </tbody>                    
+</table>
+                                            
+<center>                    
+<h1>Rendu à base d'images </h1>
+                    </center>
+                      <br>
+                     <i>Projet Réalisé par <a href="mailto:adrien.missemer_web@polytechnique.org">Adrien Missemer</a> (promo
+00)</i><br>
+                                       
+<hr><br>
+                                          
+<h2>Description du projet</h2>
+                                       
+<div align="justify">                  
+<div align="left"> </div>
+                                   
+<div align="left">                  
+<div align="left"> </div>
+                  &nbsp;&nbsp;&nbsp; Le rendu à base d'image est 
+une   technique      qui   permet de synthétiser des prises de vue
+d'une   scène     3D à   partir d'autres prises de vue. On
+n'utilise   pas d'informations       sur la géométrie   de
+la scène,   l'éclairage,      etc.  Le principal intérêt
+  de cette   technique est que le   temps  de calcul d'une prise de vue ne
+dépend     pas de la complexité      géométrique
+de la scène,     mais seulement de la taille     de la structure qui
+contient les données.   On l'utilisera donc lorsque que l'on travaille
+avec des scènes très   complexes dont on veut avoir des prises
+de vues à partir de points   rapprochés. Typiquement cette
+méthode permet de se déplacer   à l'intérieur
+du cockpit virtuel d'un avion dans un simulateur   par exemple.<br>
+    &nbsp;&nbsp;&nbsp; La reconstruction nécessite   2 types d'informations
+  en plus des images de départ :<br>
+                   </div>
+                                                    
+<ul>
+                     <li>                                               
+                                         
+    <div align="left">Pour chaque pixel, la profondeur du  point. Ceci peut 
+       s'obtenir facilement lorsqu'on travaille avec des images  de synthèse, 
+       il s'agit du z-buffer ; lorsque l'on part d'images réelles, 
+  il   faut  obtenir ces informations en utilisant un dispositif de mesure 
+ de  distances,    ou utiliser des méthodes de vision comme la stéréoscopie.</div>
+                 </li>
+                 <li>                                                   
+                       
+    <div align="left">Les paramètres des caméras qui prennent 
+       les prises de vue.  Là encore cela ne pose pas de problème 
+      si l'on travaille sur  des images de synthèse.</div>
+                 </li>
+                                           
+</ul>
+                                        
+<div align="left"> </div>
+                  </div>
+                                          
+<h2>Algorithmes utilisés</h2>
+                  Le principe de base est simple : on connait les trois coordonnées
+         d'un pixel&nbsp;X<sub><small>1</small></sub> dans l'espace image,
+ ainsi      que la matrice de projection&nbsp;P<sub>1</sub> qui fait passer
+ de l'espace      objet à l'espace image. Ce pixel correspond à
+ un point X=P<small><sub>            1</sub><sup>-1</sup></small> X<sub><small>
+   1</small></sub>   de l'espace     objet.  Donc dans une nouvelle prise 
+de vue, par une caméra  dont   la  matrice  de projection est&nbsp;P<small><sub>
+   2</sub></small> , le pixel   a pour coordonnées X<small><sub>2</sub></small>
+   =P<small><sub>   2</sub></small>        P<small><sub>1</sub><sup> -1</sup></small>
+    X<sub><small>     1</small></sub>        . Pour obtenir une image avec
+ un nouveau point de vue, il s'agit donc   d'appliquer à tous les
+points   la matrice&nbsp;P<small><sub>    2</sub></small>     P<small><sub>
+ 1</sub><sup>     -1</sup></small>. Le fait  que la matrice multiplicatrice
+  soit la même  pour tous les points permet toutes sortes d'optimisations.
+  Notamment  l'utilisation  de l'accélération  graphique lorsque
+  la carte graphique le  permet, par l'intermédiaire  d'OpenGL.<br>
+               <br>
+               On remarque cependant assez rapidement que des trous apparaissent, 
+    dans   les zones qui étaient cachées dans l'image de départ.
+       C'est pourquoi on va vouloir utiliser plusieurs images sources. Pour
+  ne   pas  multiplier le temps de calcul par <var>n</var> le nombre d'image,
+  on   regroupe  ces informations dans une unique image à plusieurs
+  couches   de profondeurs  (Layered Depth Image ou LDI - pour plus d'informations
+  voir   <a href="http://www.research.microsoft.com/siggraph96/1998/ldi.htm">LDI</a>
+         ),  qui est une vue de la scène  à partir d'un seul
+ point     de vue,  mais avec plusieurs pixels à  différentes
+ profondeurs     sur chaque  ligne de vue. La taille de cette image est proportionnelle
+  à    la complexité  de la scène en terme de profondeur
+  (nombre  moyen de points par ligne de vue).<br>
+               Outre le gain en espace et en temps, un intérêt 
+ des   LDI   est la possibilité d'utiliser   l'algorithme de McMillan 
+ pour   afficher   les points dans un ordre compatible   avec les faces cachées.<br>
+           <br>
+                                     
+<h2>Résultats obtenus</h2>
+           Dans un premier temps, on a cherché à obtenir une
+ solution     rapide. Pour cela, une fois la LDI construite, les points sont
+ stockés     dans un tableau linéaire une fois pour toutes.
+Pour chaque nouveau     point de vue, on stocke la matrice de transformation
+P<small><sub> 2</sub></small>            P<small><sub>1</sub><sup> -1</sup></small>
+  dans la carte graphique    et  on fait afficher tous les points, en utilisant
+un z-buffer. On obtient,    avec  une carte accélératrice 3d,
+environ 10fps, ce qui permet    facilement  de naviguer dans la scène.
+La première image est  l'image de base. Dans la seconde, la caméra
+ est décalée.   On voit apparaître des zones en noires
+ correspondant à une absence  d'information.<br>
+               
+<div align="center"><a href="original.jpg"><img src="original_thumb.jpg" alt="image" width="320" height="240" border="0">
+    </a><a href="nuage_de_points.jpg"><img src="nuage_de_points_thumb.jpg" alt="image" width="320" height="240" border="0">
+    </a>&nbsp;    <br>
+    </div>
+     <br>
+     Si on s'approche du modèle, on va voir apparaître un deuxième 
+   défaut, inhérent à la technique de rendu (cf. <a href="projet.html#problemes">partie suivante</a>) :    
+<div align="center"><a href="nuage_de_points2.jpg"><img src="nuage_de_points_thumb.jpg" alt="image" width="320" height="240" border="0">
+   </a> <a href="nuage_de_points3.jpg"><img src="nuage_de_points3_thumb.jpg" alt="image" width="320" height="240" border="0">
+      </a> <br>
+    </div>
+           <br>
+       C'est pourquoi, dans un deuxième temps, on a cherché 
+à    obtenir un résultat ayant une qualité sensiblement 
+meilleure,    au prix du temps de calcul. Avec le même point de vue 
+que dans l'image    précédente, on complète l'image de
+façon acceptable.<br>
+           
+<div align="center"><a name="flou"></a><a href="nuage_de_points_avec_rendu.jpg"><img src="nuage_de_points_avec_rendu_thumb.jpg" alt="image" width="320" height="240" border="0">
+       </a><br>
+    </div>
+     <br>
+     Dans ce mode de rendu, les capacités d'accélération 
+ graphique  sont moins évidentes à utiliser. On remplace le 
+z-buffer par l'emploi de l'algorithme de McMillan (<a href="http://www.research.microsoft.com/siggraph96/1998/ldi.htm">McMillan</a>
+   ). On n'obtient plus qu'une image par seconde sur un duron 800. L'image
+ de sortie est légèrement pixellisée et floue (si on
+la  regarde en zoom 1:1), mais cela est dû à l'échantillonnage
+ des données qui ne permet pas d'avoir la précision souhaitée 
+ partout.<br>
+           <br>
+                             
+<h2><a name="problemes">Problèmes rencontrés et solutions apportées</a></h2>
+   
+<ul>
+    <li> Une partie non négligeable de temps imparti a été
+ consacré à l'implémentation d'opérations géométriques 
+ de bases avec les matrices 4x4, de manière à pouvoir utiliser 
+ les données des caméras, et mettre en correspondance les points 
+ de plusieurs images. En effet, toutes la documentation sur le net utilise 
+ la notation anglo-saxonne des matrices, qui est exactement la transposée 
+ de la notation française. Par exemple une matrice de translation en
+notation française se note : </li>
+  
+  <div align="center">   
+  <table cellpadding="2" cellspacing="2" border="1" width="80">
+     <tbody>
+       <tr>
+         <td valign="top">1<br>
+         </td>
+         <td valign="top"><br>
+         </td>
+         <td valign="top"><br>
+         </td>
+         <td valign="top">-tx<br>
+         </td>
+       </tr>
+       <tr>
+         <td valign="top"><br>
+         </td>
+         <td valign="top" align="left">1<br>
+         </td>
+         <td valign="top"><br>
+         </td>
+         <td valign="top">-ty<br>
+         </td>
+       </tr>
+       <tr>
+         <td valign="top"><br>
+         </td>
+         <td valign="top"><br>
+         </td>
+         <td valign="top">1<br>
+         </td>
+         <td valign="top">-tz<br>
+         </td>
+       </tr>
+       <tr>
+         <td valign="top"><br>
+         </td>
+         <td valign="top"><br>
+         </td>
+         <td valign="top"><br>
+         </td>
+         <td valign="top">1<br>
+         </td>
+       </tr>
+             
+    </tbody>     
+  </table>
+  </div>
+   
+  <div align="left"><br>
+  </div>
+  Tout le problème a donc été de savoir quelle norme 
+utilisaient les données fournies, et s'il fallait ajouter d'autres 
+transformations pour passer des coordonnées du monde aux coordonnées 
+des pixels dans l'image.<br>
+  <br>
+    <li> En plus des trous qui apparaissent dans les zones non couvertes
+ par   les   images sources, on observe des lignes noires de plus en plus 
+denses   à   mesure que l'on se rapproche du modèle (cf <a href="nuage_de_points2.jpg">images</a> ci-dessus). Ceci est dû   au 
+ fait  qu'une surface donnée est composée d'un nombre constant 
+   de pixels, mais que son aire sur l'écran grandit si l'on s'en approche. 
+   Une solution pour résoudre ce problème est d'afficher les 
+ points  comme des tâches de largeur d'autant plus grande que l'on s'est
+ rapproché.    C'est une solution efficace, mais qui ralentit cependant
+ le processus (en    restreignant entre autres les possibilités d'accélération
+     graphique), et qui produit un effet de     <a href="nuage_de_points_avec_rendu.jpg">flou</a> sur l'image.</li>
+   
+</ul>
+              
+<ul>
+    <li>         L'inconvénient majeur de l'utilisation des LDI est
+ le rééchantillonnage   que    les pixels subissent. La LDI
+n'est utilisable que pour des prises  de vues     à partir de points
+proches du centre de la LDI. En effet,  plus la profondeur augmente, plus
+la distance entre 2 points voisins de la LDI à  la même profondeur
+augmente (en d'autres termes la résolution diminue lorsque l'on s'éloigne
+du centre de la LDI).<br>
+           
+    <div align="left">Il est donc important de choisir le point de vue qui
+ va servir à construire la LDI en fonction des prises de vues que
+l'on  va vouloir générer.<br>
+      </div>
+    </li>
+   
+</ul>
+                                       
+<hr><br>
+                     <a href="http://www.enseignement.polytechnique.fr/profs/informatique/Francois.Sillion/Majeure/GSI.html#sujets"> Retour à la
+liste    des   projets     réalisés</a>                   
+   
+
+
+</body></html>
