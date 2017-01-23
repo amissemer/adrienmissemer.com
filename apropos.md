@@ -13,4 +13,4 @@ Technologies Java, eco-système Spring, intégration et déploiement continus, D
 
 ### Contactez moi
 
-[contact@adrienmissemer.com](mailto:contact@adrienmissemer.com)
+{% include _contact.html %}
