@@ -13,4 +13,4 @@ Technologies Java, eco-système Spring, intégration et déploiement continus, D
 
 ### Contactez moi
 
-{% include _contact.html %}
+{% include contact.html %}
