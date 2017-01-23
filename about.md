@@ -13,4 +13,4 @@ Java technologies, Spring eco-system, continuous integration and deployment prat
 
 ### Contact me
 
-[contact@adrienmissemer.com](mailto:contact@adrienmissemer.com)
+{% include contact.html %}
