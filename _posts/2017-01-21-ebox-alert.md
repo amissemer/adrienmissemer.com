@@ -3,6 +3,9 @@ layout: post
 title: Comment j'évite d'exploser mon forfait internet
 published: true
 comments: false
+category: ebox-alert
+tags:
+  - ebox-alert
 ---
 
 ## ... et comment n'importe quel abonné EBOX peut faire de même en 3 clics
