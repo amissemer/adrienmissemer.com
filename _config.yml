@@ -98,4 +98,5 @@ defaults:
       type: my_tags
     values:
       layout: blog_by_tag
-  
+
+paginate: 5
