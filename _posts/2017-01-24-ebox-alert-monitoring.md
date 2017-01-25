@@ -1,5 +1,5 @@
 ---
-published: false
+published: true
 title: Un service fiable et résilient
 categories: ebox-alert
 tags:
@@ -14,6 +14,9 @@ C'est là que le _monitoring_ (supervision) rentre en jeu. Mais pas seulement le
 ### Résilience
 
 La résilience est la capacité à résister aux erreurs et aux pannes. Il existe des frameworks sophistiqués tels que [Netflix/Hystrix](https://github.com/Netflix/Hystrix) mais dans le cas d'EBOX Alert j'ai utilisé une solution adhoc plus simple.
+
+![Architecture EBOX]({{site.baseurl}}/images/EBOX-Architecture.png)
+
 
 L'exécution du processus _"refresh&alert"_ est déclenchée à intervals réguliers (toutes les minutes) par l'application, et tous les comptes dont les données ont expirées font alors une tentative de mise à jour, avec une alerte en cas de dépassement d'un seuil. Si tout se passe bien pour le compte, la date de prochaine mise à jour _nextRefreshTime_ est calculée en fonction de la priorité du compte. En cas d'erreur imprévue, la date de prochaine mise à jour ne change pas, de façon à ce qu'une nouvelle tentative soit effectuée lors de la prochaine exécution.
 
@@ -35,6 +38,5 @@ En pratique, cela peut se produire en cas de situation imprévue avec le portail
 
 Grâce à ces mécanismes de gestion des erreurs et de _monitoring_, le site ne nécessite aucune vérification manuelle. Quoiqu'il arrive (à part si DeadManSnitch cesse de fonctionner sans prévenir), je reçois un courriel en cas de problème. Le reste du temps je peux dormir sur mes deux oreilles.
 
-![Architecture EBOX]({{site.baseurl}}/images/EBOX-Architecture.png)
 
 [ebox-alert]: http://www.ebox-alert.ca "ebox-alert.ca"
