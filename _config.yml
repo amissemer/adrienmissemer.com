@@ -99,4 +99,4 @@ defaults:
     values:
       layout: blog_by_tag
 
-paginate: 5
+paginate: 10

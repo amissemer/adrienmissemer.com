@@ -1,5 +1,5 @@
 ---
 slug: archives
 name: Archives
-color: '#dddddd'
+color: '#ffffff'
 ---
