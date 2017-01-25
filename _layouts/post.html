@@ -29,14 +29,15 @@ layout: default
     {% endfor %}
   {% endif %}
 
-  <p class="m-t-3 text-muted font-italic">
-    <small>Posted{% if category_content %} in </small>{{ category_content }}<small>{% endif %}{{ tags_content }}</small>
-  </p>
   </div>
 
   <div class="date">
     Written on {{ post.date | date: "%B %e, %Y" }}
   </div>
+
+  <p class="m-t-3 text-muted font-italic">
+    <small>Posted{% if category_content %} in </small>{{ category_content }}<small>{% endif %}{{ tags_content }}</small>
+  </p>
 
   {% include disqus.html %}
 </article>
