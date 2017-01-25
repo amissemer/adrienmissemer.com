@@ -3,7 +3,7 @@ layout: post
 title: Comment j'évite d'exploser mon forfait internet
 published: true
 comments: false
-category: ebox-alert
+category: web-development
 tags:
   - ebox-alert
 ---

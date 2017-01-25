@@ -1,5 +1,5 @@
 ---
-slug: ebox-alert
-name: EBOX Alert
+slug: web-development
+name: Web Development
 color: '#ffcccc'
 ---

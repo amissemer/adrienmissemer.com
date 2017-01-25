@@ -5,7 +5,7 @@ categories: ebox-alert
 tags:
   - ebox-alert
   - monitoring
-category: ebox-alert
+category: web-development
 ---
 Cet article est le 4e de la série sur [EBOX Alert][ebox-alert], 
 
