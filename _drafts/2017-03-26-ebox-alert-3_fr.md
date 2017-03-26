@@ -1,5 +1,6 @@
 ---
 published: false
+title: Déployer une application Java disponible 24h/24 dans le cloud pour 0$
 ---
 
 Cet article fait suite à [Passer EBOX Alert à l'échelle en contournant les restrictions]({% post_url 2017-01-22-ebox-alert-2 %}). Il est surprenant de pouvoir rouler une application Java-Spring Boot + tomcat (gourmande en mémoire), de la rendre disponible 24h/24, et de supporter le protocole https, le tout pour 0$/mois (hors coût du domaine si vous voulez votre propre nom de domaine). Pourtant c'est possible, voici comment je procède pour ebox-alert.ca.
