@@ -8,7 +8,7 @@ Cet article fait suite à [Passer EBOX Alert à l'échelle en contournant les re
 Voici un aperçu de l'architecture du service:
 ![Architecture EBOX]({{site.baseurl}}/images/EBOX-Architecture.png)
 
-### Free SMS notifications
+### Envoyer gratuitement des notifications par SMS
 
 First of all, the SMS. This typically costs a cent or two if you really want to send an actual SMS to any Canadian phone number. There are ways to send free MMS that are mobile carrier specific, but for SMS, carriers will charge a (small) fee.
 
