@@ -3,16 +3,16 @@ published: false
 title: Déployer une application Java disponible 24h/24 dans le cloud pour 0$
 ---
 
-Cet article fait suite à [Passer EBOX Alert à l'échelle en contournant les restrictions]({% post_url 2017-01-22-ebox-alert-2 %}). Il est surprenant de pouvoir rouler une application Java-Spring Boot + tomcat (gourmande en mémoire), de la rendre disponible 24h/24, et de supporter le protocole https, le tout pour 0$/mois (hors coût du domaine si vous voulez votre propre nom de domaine). Pourtant c'est possible, voici comment je procède pour ebox-alert.ca.
+Cet article fait suite à [Passer EBOX Alert à l'échelle en contournant les restrictions]({% post_url 2017-01-22-ebox-alert-2 %}). Il est surprenant de pouvoir rouler une application Java-Spring Boot + tomcat (gourmande en mémoire), de la rendre disponible 24h/24, et de supporter le protocole https, le tout pour 0$/mois (hors coût du domaine si vous voulez votre propre nom de domaine). Pourtant c'est possible, voici comment je procède pour [ebox-alert].
 
 Voici un aperçu de l'architecture du service:
 ![Architecture EBOX]({{site.baseurl}}/images/EBOX-Architecture.png)
 
 ### Envoyer gratuitement des notifications par SMS
 
-First of all, the SMS. This typically costs a cent or two if you really want to send an actual SMS to any Canadian phone number. There are ways to send free MMS that are mobile carrier specific, but for SMS, carriers will charge a (small) fee.
+Envoyer un SMS coûte en général un cent ou 2 vers les numéros Canadiens. Il y a des moyens d'envoyer des messages multimédias (MMS) gratuitement, mais les MMS ne sont pas universellement supportés, et tous les opérateurs de téléphonie mobile chargent des frais pour les SMS delivrés à leurs abonnés (en général, cachés dans un forfait).
 
-Given the small number of SMS that I need to send, I don't want to handle the complexity of using or integrating with an open-source SMS gateway. AND I've found [ClickSend](https://www.clicksend.com). New accounts get 1$ free credit, which is not a lot but enough to send a bit less than 100 SMS.
+J'envoie les SMS via [ClickSend](https://www.clicksend.com). Les nouveaux comptes ClickSend obtiennent 1$ de crédit grauit. Ce n'est pas grand chose mais sufisamment pour envoyer un peu moins de 100 SMS.
 
 I used to send SMS notifications for every alert threshold (75%, 90%, 100% and the +10GB threshold - 10GB over the plan), but then I figured the only thresholds that deserve an immediate notification are the 100% threshold (after which you start getting charges for over-usage) and the +10GB threshold (after which you should really buy usage blocks). And very few of my users reach 100% usage. So, by choosing which alerts deserve an immediate alert, I reduced the number of SMS sent by month to less than 10. And the free credit can last a few months.
 
@@ -44,6 +44,19 @@ There are three aspects of [ebox-alert] that deserve a proper monitoring solutio
 
 That one is easy, the volume of emails sent by [ebox-alert] is low enough to remain in the free plan of [SendGrid](https://app.sendgrid.com/), also an Heroku addon.
 
-In next article (in French), I will be talking more in depth about the [monitoring and reliability of EBOX Alert]({% post_url 2017-01-24-ebox-alert-monitoring %}).
+### Supporting HTTPS
+
+Google Chrome displays an "insecure" warning when a webpage requests a password over plain-HTTP, so supporting HTTPS is becoming a must have for applications with login forms nowadays. Heroku apps get free SSL support on the `https://customapp.herokuapp.com` domain, but if you want your own domain, you will need a paid addon or upgrade to a paid plan. And you'll need to obtain your own SSL certificate.
+
+The 0$ solution I've found is using Amazon WebService (AWS) CDN (Content Delivery Network) service: CloudFront, along with certificates provided by AWS Certificate Manager.
+
+* AWS Certificate Manager offers free certificates (even for custom domain names) that can be used with Amazon CloudFront. 
+* In the free tier, Amazon CloudFront is free below 50GB of data transfer and 2 million requests per month. And after one year, once you're not eligible to the free tier anymore, unless you host a site with a lot of traffic, it should cost less than 0.25$/month (check [AWS CloudFront Pricing](https://aws.amazon.com/cloudfront/pricing/)). The pay-as-you-grow model with no upfront cost is great for services with low traffic.
+
+With AWS CloudFront, the service remains hosted by Heroku, exposed securely over HTTPS on https://customapp.herokuapp.com. But your custom domain directs https://www.customdomain.ca traffic to CloudFront CDN (with a DNS CNAME entry). CloudFront can be used to cache some content in regional datacenters, for faster access, but that's not why we use it. By configuring the CloudFront distribution origin site to be https://customapp.herokuapp.com, you now have your site reverse-proxied and accessible over HTTPS on your own domain.
+
+### Conclusion
+
+That all for running a 24/7 service for 0$ a month. In next article (in French), I will be talking more in depth about the [monitoring and reliability of EBOX Alert]({% post_url 2017-01-24-ebox-alert-monitoring %}).
 
 [ebox-alert]: http://www.ebox-alert.ca "ebox-alert.ca"
